@@ -1,16 +1,21 @@
-__pycache__/
-
-src/config.py
-NTOJ_installer/
-deploy.sh
-*.map
-NTOJ_installer/
-test.py
-
-.idea/
-
-venv/
-
-wget-log
-
+# Runtime data and local configuration
+/data/
+/backend/data/
 .env
+.env.*
+!.env.example
+
+# Go
+/backend/ntoj
+/backend/bin/
+
+# Node
+node_modules/
+/frontend/build/
+/frontend/.react-router/
+*.tsbuildinfo
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store

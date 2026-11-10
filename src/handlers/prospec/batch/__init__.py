@@ -1,1 +1,0 @@
-# Batch problem type handlers
