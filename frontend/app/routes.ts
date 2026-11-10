@@ -1,0 +1,41 @@
+import { type RouteConfig, index, layout, prefix, route } from "@react-router/dev/routes";
+
+export default [
+  layout("layouts/site.tsx", [
+    index("routes/home.tsx"),
+    route("signin", "routes/signin.tsx"),
+    route("signup", "routes/signup.tsx"),
+    route("problems", "routes/problems.tsx"),
+    route("problems/:id", "routes/problem.tsx"),
+    route("problems/:id/rank", "routes/problem-rank.tsx"),
+    route("submissions", "routes/submissions.tsx"),
+    route("submissions/:id", "routes/submission.tsx"),
+    route("rank", "routes/rank.tsx"),
+    route("users/:id", "routes/user.tsx"),
+    route("settings", "routes/settings.tsx"),
+    route("classes", "routes/classes.tsx"),
+    route("boards", "routes/boards.tsx"),
+    route("boards/:id", "routes/board.tsx"),
+    route("questions", "routes/questions.tsx"),
+    route("contests", "routes/contests.tsx"),
+    route("contests/:cid", "routes/contest/layout.tsx", [
+      index("routes/contest/info.tsx"),
+      route("problems", "routes/contest/problems.tsx"),
+      route("problems/:id", "routes/contest/problem.tsx"),
+      route("submissions", "routes/contest/submissions.tsx"),
+      route("scoreboard", "routes/contest/scoreboard.tsx"),
+      route("qa", "routes/contest/qa.tsx"),
+      route("manage", "routes/contest/manage.tsx"),
+    ]),
+    route("admin", "routes/admin/layout.tsx", [
+      index("routes/admin/dashboard.tsx"),
+      route("accounts", "routes/admin/accounts.tsx"),
+      ...prefix("problems", [index("routes/admin/problems.tsx"), route(":id", "routes/admin/problem.tsx")]),
+      route("bulletins", "routes/admin/bulletins.tsx"),
+      route("boards", "routes/admin/boards.tsx"),
+      route("questions", "routes/admin/questions.tsx"),
+      route("logs", "routes/admin/logs.tsx"),
+    ]),
+    route("*", "routes/not-found.tsx"),
+  ]),
+] satisfies RouteConfig;

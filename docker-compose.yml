@@ -1,0 +1,59 @@
+# NTOJ: web (nginx + SPA) -> backend (Go API) -> db (PostgreSQL).
+# Copy .env.example to .env and fill it in before `docker compose up -d`.
+services:
+  web:
+    build: ./frontend
+    ports:
+      - "${HTTP_PORT:-8080}:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks: [edge, app]
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgres://ntoj:${DB_PASSWORD:?Set DB_PASSWORD in .env}@db:5432/ntoj
+      SITE_TITLE: ${SITE_TITLE:-NTOJ}
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+      ALLOW_SIGNUP: ${ALLOW_SIGNUP:-true}
+      SUBMIT_COOLDOWN: ${SUBMIT_COOLDOWN:-5}
+      JUDGE_TOKEN: ${JUDGE_TOKEN:-}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_NAME: ${ADMIN_NAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      # Only the bundled nginx may set X-Forwarded-For.
+      TRUSTED_PROXIES: 172.16.0.0/12
+    volumes:
+      - data:/data
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [app]
+    restart: unless-stopped
+
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: ntoj
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ntoj
+    volumes:
+      - db:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ntoj -d ntoj"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks: [app]
+    restart: unless-stopped
+
+volumes:
+  data:
+  db:
+
+networks:
+  edge:
+  app:
+    internal: true
