@@ -5,9 +5,10 @@
 .env.*
 !.env.example
 
-# Go
-/backend/ntoj
-/backend/bin/
+# Gradle / Kotlin
+/backend/build/
+/backend/.gradle/
+/backend/.kotlin/
 
 # Node
 node_modules/

@@ -4,7 +4,7 @@
 
 | 目錄 | 內容 |
 | --- | --- |
-| `backend/` | Go API 伺服器（`net/http` + pgx），唯一的資料庫是 PostgreSQL |
+| `backend/` | Kotlin API 伺服器（Ktor + JDBC），唯一的資料庫是 PostgreSQL |
 | `frontend/` | React Router v8（SPA 模式）+ shadcn/ui + Tailwind CSS v4 |
 | `docs/judge-api.md` | 評測 worker 與後端之間的協定 |
 
@@ -26,14 +26,14 @@ docker compose up -d --build
 
 ## 開發
 
-需要 Go 1.26+、Node 22+、PostgreSQL 16+。
+需要 JDK 21、Node 22+、PostgreSQL 16+（Gradle 由 `./gradlew` 自動下載）。
 
 ```sh
-# 後端（啟動時自動套用 backend/internal/db/migrations 內的 migration）
+# 後端（啟動時自動套用 backend/src/main/resources/db/migrations 內的 migration）
 cd backend
 DATABASE_URL=postgres://ntoj:ntoj@localhost/ntoj COOKIE_SECURE=false \
 ADMIN_EMAIL=admin@example.com ADMIN_PASSWORD=change-me-please \
-go run ./cmd/ntoj
+./gradlew run
 
 # 前端（Vite 會把 /api 代理到 http://localhost:8080，因此與正式環境一樣是同源）
 cd frontend
@@ -45,8 +45,8 @@ npm run dev
 
 ```sh
 cd backend
-go test ./...                                                        # 單元測試
-TEST_DATABASE_URL=postgres://ntoj:ntoj@localhost/ntoj_test go test ./...   # 含 API 整合測試（會清空該資料庫）
+./gradlew test                                                        # 單元測試
+TEST_DATABASE_URL=postgres://ntoj:ntoj@localhost/ntoj_test ./gradlew test   # 含 API 整合測試（會清空該資料庫）
 
 cd frontend
 npm run typecheck && npm run build
@@ -56,7 +56,7 @@ npm run typecheck && npm run build
 
 | 變數 | 預設 | 說明 |
 | --- | --- | --- |
-| `DATABASE_URL` | 必填 | PostgreSQL 連線字串 |
+| `DATABASE_URL` | 必填 | PostgreSQL 連線字串（`postgres://user:pass@host/db` 或 `jdbc:postgresql://…`） |
 | `LISTEN_ADDR` | `:8080` | 監聽位址 |
 | `DATA_DIR` | `./data` | 測資與題目附件的儲存位置 |
 | `SITE_TITLE` | `NTOJ` | 網站名稱 |
